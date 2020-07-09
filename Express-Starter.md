@@ -20,3 +20,18 @@ npm i express
 // installs express, adds dependencies
 // + installs additional modules and adds package-lock.json
 ```
+
+**In `server.js`**
+Express uses `require` rather than `import` as seen in React and some other frameworks.
+```js
+const express = require('express');
+const app = express();
+// creates an instance of Express
+const port = 3000;
+// here use the port used with localhost
+OR
+const port = process.env.PORT || 3000
+// above will be used with dotenv 
+// tells what port we are going to  be using
+```
+
