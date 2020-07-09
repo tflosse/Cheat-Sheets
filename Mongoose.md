@@ -1,8 +1,8 @@
-#Mongoose
+# Mongoose
 
 Mongoose allows communication with the database directly in a text editor (without navigating commands in a terminal).
 
-###Basic Set Up
+### Basic Set Up
 
 **Terminal commands**
 ```js
@@ -74,7 +74,7 @@ setTimeout(() => {
 > mongo disconnected
 > [nodemon] clean exit - waiting for changes before restart
 
-###Schema Set Up
+### Schema Set Up
 
 **In `modelname.js`**
 Schema is the "shape" of our document.
@@ -125,11 +125,11 @@ const Tweet = mongoose.model("Tweet", tweetSchema);
 module.exports = Tweet;
 ```
 
-###Using the Model
+### Using the Model
 
 **In `App.js`**
 
-#####Hard-coded here:
+##### Hard-coded here:
 ```js
 const myDoc = {
     prop1: "Lorem Ipsum",
