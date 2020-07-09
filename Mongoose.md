@@ -98,8 +98,8 @@ const mySchema = new Schema(
     {timestamps: true}
 )
 
-// this example uses a tweet:
-const tweetSchema = new Schema(
+// this example uses a ModelName:
+const ModelNameSchema = new Schema(
     {
         title: String,
         body: String,
@@ -120,16 +120,17 @@ module.exports = ModelName;
 // exports this model
 ```
 ```js
-// tweet example:
-const Tweet = mongoose.model("Tweet", tweetSchema);
-module.exports = Tweet;
+// ModelName example:
+const ModelName = mongoose.model("ModelName", ModelNameSchema);
+module.exports = ModelName;
 ```
 
-### Using the Model
+## CRUD with Mongoose:
+**In `App.js`**...
 
-**In `App.js`**
+### Creating (`create` and `insert`) using the Model
 
-##### Hard-coded here:
+##### Create (one):
 ```js
 const myDoc = {
     prop1: "Lorem Ipsum",
@@ -144,6 +145,7 @@ ModelName.create(myDoc, (error, modelname) => {
         console.log(modelname)
     }
     db.close();
+    // close() is not necessary, but a good habit to have when testing
 });
 ```
 *Running in terminal with show:*
@@ -164,4 +166,141 @@ Connection is established.
 mongo disconnected
 [nodemon] clean exit - waiting for changes before restart
 ```
+
+##### Insert (many):
+```js
+const manyDocs = [{
+    prop1: "Lorem Ipsum",
+    prop2: "Nunc sed porta dui. Donec porttitor rhoncus fringilla. Sed mollis semper eros et semper.",
+    prop5: 212
+},
+{
+    etc.
+}];
+
+ModelName.insertMany(manyDocs, (error, modelname) => {
+    if (error) {
+        console.log(error)
+    } else {
+        console.log(modelname)
+    }
+});
+```
+
+
+### Reading (`find`) data
+
+Generic `find()` allows searches for entire documents, only some properties, specific properties, or specific values:
+```js
+ModelName.find((error, docs) => {
+    console.log(docs);
+});
+// only the callback function
+```
+
+Find all docs and show only their `prop1` and `prop2`:
+```js
+ModelName.find({}, "prop1 prop2", (error, doc) => {
+    console.log(doc);
+});
+```
+
+```js
+ModelName.find({prop1:'Lorem Ipsum'}, (error, doc) => {
+    console.log(doc);
+});
+```
+
+```js
+ModelName.find({prop5:{$gte: 20}}, (error, docs) => {
+    console.log(docs);
+});
+// $gte is a mongoose command that stands for "greater than or equal"
+```
+- `findById()` uses the ObjectID (can be used for Show Routes)
+- `findOne()` stops at the first document that meets serch criteria
+- `where()` is used in a query builder (second code block below) to specify nested properties:
+```js
+// With a JSON doc
+Person.
+  find({
+    occupation: /host/,
+    'name.last': 'Ghost',
+    age: { $gt: 17, $lt: 66 },
+    likes: { $in: ['vaporizing', 'talking'] }
+  }).
+  limit(10).
+  sort({ occupation: -1 }).
+  select({ name: 1, occupation: 1 }).
+  exec(callback);
+
+// Using query builder
+Person.
+  find({ occupation: /host/ }).
+  where('name.last').equals('Ghost').
+  where('age').gt(17).lt(66).
+  where('likes').in(['vaporizing', 'talking']).
+  limit(10).
+  sort('-occupation').
+  select('name occupation').
+  exec(callback);
+  ```
+
+### Update (`update`) data
+
+- `updateMany()`
+- `update()`
+
+##### Update (one):
+
+- `findByIdAndUpdate()`
+- `findOneAndUpdate()` will find the doc that meets criteria and update it (below)
+- `updateOne()`
+
+- `findOneAndReplace()`
+- `replaceOne()`
+
+```js
+ModelName.findOneAndUpdate({prop1: "Lorem Ipsum"}, {prop4: false}, {new: true}, (error, doc) => {
+    if (error) {
+        console.log(error)
+    } else {
+        console.log(doc)
+    }
+});
+```
+
+### Deleting (`delete`) data
+
+- `remove()` will remove **ALL INSTANCES**
+- `deleteMany()`
+
+
+##### Delete (one):
+
+- `findByIdAndRemove()`
+- `findOneAndRemove()`
+or
+- `deleteOne()`
+- `findByIdAndDelete()`
+- `findOneAndDelete()`
+
+```js
+ModelName.deleteOne({prop1:"Lorem Ipsum"}, (error, doc) => {
+    if (error) {
+        console.log(error)
+    } else {
+        console.log(doc)
+    }
+});
+```
+> Console reads:
+> { n: 1, ok: 1, deletedCount: 1 }
+
+
+#### Mongoose Docs:
+
+Mongoose index for `Getting Started` is [here](https://mongoosejs.com/docs/index.html).
+The short list of CRUD operations for Mongoose is available at: [Mongoose.js](https://mongoosejs.com/docs/models.html)
+
 
