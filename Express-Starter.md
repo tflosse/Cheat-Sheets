@@ -2,6 +2,8 @@
 
 ###Basic Set Up
 
+Install basics can also be found here [here](https://expressjs.com/en/starter/installing.html).
+
 **Terminal commands**
 ```js
 mkdir or git clone <your repo url>
@@ -33,5 +35,36 @@ OR
 const port = process.env.PORT || 3000
 // above will be used with dotenv 
 // tells what port we are going to  be using
+```
+
+**Dotenv** is a zero-dependency module that loads environment variables from a `.env` file into `process.env`. it stores configuration in the environment separate from code.
+
+```js
+// in terminal
+npm i dotenv
+touch .env
+```
+```js
+// in the .env file
+PORT = 3000
+// or port corresponding to the one used above.
+```
+
+Getting started with backend and server-side, there might be a need to install `nodemon` - `nodemon` is a tool that helps develop node. js based applications by automatically restarting the node application when file changes in the directory are detected.
+```js
+// this instance:
+npm i nodemon
+// globally:
+npm i nodemon -g
+OR sudo npm i nodemon -g
+// "sudo" overrides permissions - use it sparingly
+```
+
+Create a `.gitignore` file, this prevents files listed within from being pushed to git
+```js
+touch .gitignore
+// in .gitignore file add
+node_modules
+.env
 ```
 

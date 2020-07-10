@@ -1,6 +1,17 @@
 # Mongoose
 
-Mongoose allows communication with the database directly in a text editor (without navigating commands in a terminal).
+Mongoose allows communication with the database (MongoDB) directly in a text editor (without navigating commands in a terminal). It is a Schema-based solution to model application data. Schemas create key:value pairs for the different data types used.
+
+***How is it used?***
+1. Require mongoose module
+2. Set a variable reference to a mongoose Schema
+3. Create the Schema
+4. Create an instance of the Schema with a Model
+
+Establish a connection with MongoDB:
+1. Create a variable assigned to an instance of the database
+2. Use `mongoose.connect()`
+(`mongod` should be runningin the terminal for some older versions)
 
 ### Basic Set Up
 
@@ -29,16 +40,22 @@ touch modelname.js
 
 **In `App.js`**
 Mongoose also uses `require`
+
 ```js 
 const mongoose = require('mongoose');
 const Model = require('./modelname');
-// note Model capitalization
+// note Model capitalization (this Model is the instance of the Schema that will be created)
 ```
+When working with multiple databases and models, the above might require several models and collections: 
+- Mongoose module
+- Models (or instances of the Schemas that are builtand used to navigate data)
+- Database collections (as js file with a const holding the data(converted from JSON to be readable in JS)). *Both of the above are exported with `module.exports = varName`*
 
 ```js
 //Global Config
 const mongoURI = 'mongodb://localhost:27017/' + 'sub-database';
 // tells Mongoose where to connect with Mongo and which sub-databases to connect to (if it doesn't exist, it will be created)
+// defaults to 27017
 const db = mongoose.connection;
 // sets shorthand for mongoose.connection
 
