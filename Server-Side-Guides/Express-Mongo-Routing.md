@@ -8,7 +8,7 @@ In an existing Express app, install Mongoose.
 
 > npm i mongoose
 
-If starting fresh, install both (refer to [Express Basics](https://github.com/tflosse/Cheat-Sheets/blob/master/Basics-Express.md) markdown as a good place to start)
+If starting fresh, install both (refer to [Express Basics](https://github.com/tflosse/Cheat-Sheets/blob/master/Basics-Express.md) markdown if starting with Express)
 
 Check that your dependencies are installed:
 ```js
@@ -24,7 +24,7 @@ Following the Separation of Concerns Principle, create a separate directory for 
 > touch Connection.js
 
 **In `connection.js`**
-Connect to mongoose and mongo, similarly to setting up Mongoose ([Mongoose Basics](https://github.com/tflosse/Cheat-Sheets/blob/master/Basics-Mongoose.md))
+Connect mongoose and mongo, similarly to setting up Mongoose ([Mongoose Basics](https://github.com/tflosse/Cheat-Sheets/blob/master/Basics-Mongoose.md))
 
 ```js
 const mongoose = require('mongoose');
