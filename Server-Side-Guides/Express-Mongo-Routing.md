@@ -65,13 +65,32 @@ An over-simplified way to look at the Express-Mongo connection is:
 - Mongoose commands determine how the data is manipulted
 
 **In `controllers` directory**
-Create (or refactor routes), previous done in Express ([Express Basics](https://github.com/tflosse/Cheat-Sheets/blob/master/Server-Side-Guides/Basics-Express.md), brief recall of RESTful routes also available there).
+Create (or refactor routes previously done in [Express](https://github.com/tflosse/Cheat-Sheets/blob/master/Server-Side-Guides/Basics-Express.md))
+
+**RESTful routes -** Here, `entries` is the controller used in the Express server.js file (or what will appear in the URL before index, show, and other routes)
+> For instance, for a collection of movies:
+>   ```
+>   const moviesController = require('./controllers/filename');
+>   app.use('/movies', moviesController);
+>   ```
+> The URL will be "/movies" + routes declared in controllers
+
+
+| URL | HTTP Verb |  Action |
+|------------|-------------|------------|
+| /entries/         | GET | index |
+| /entries/new      | GET | new |  
+| /entries          | POST | create | 
+| /entries/:id      | GET | show |      
+| /entries/:id/edit | GET | edit |     
+| /entries/:id      | PATCH/PUT | update |   
+| /entries/:id      | DELETE | destroy |
 
 #### Index Route
 ```js
 router.get('/', (req, res) => {
 // Recall Express routes syntax for (request, response)
-    Fruit.find({}, (err, allEntries) => {
+    Entry.find({}, (err, allEntries) => {
         if (err) console.log(err)
         else res.send(allEntries)
     })
@@ -121,6 +140,8 @@ router.delete('/:id', (req, res) => {
     })
 });
 ```
+
+#### Update Route
 
 
 ##### *Option* to test with Postman
