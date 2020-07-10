@@ -20,8 +20,8 @@ Check that your dependencies are installed:
   ```
 
 Following the Separation of Concerns Principle, create a separate directory for data. There, create a file where we will connect Mongoose to Mongo (our database).
-> mkdir db
-> touch Connection.js
+> mkdir db &&
+> touch db/Connection.js
 
 **In `connection.js`**
 Connect mongoose and mongo, similarly to setting up Mongoose ([Mongoose Basics](https://github.com/tflosse/Cheat-Sheets/blob/master/Server-Side-Guides/Basics-Mongoose.md))
@@ -219,8 +219,7 @@ Deleting:
 ![Pre-post](https://i.imgur.com/CIcewu8.png)
 
 Updating:
-> Switch to PUT > Body
-> Enter key:value pairs to update > SEND Request
+> Switch to PUT > Body > Enter key:value pairs to update > SEND Request
 ![Pre-post](https://i.imgur.com/mo6gvWw.png)
 
 Double-check by refreshing in browser at http://localhost:3000/fruits
@@ -336,8 +335,7 @@ router.put('/:newModelId/addEntries/:id', (req, res) => {
 ***Fruits example cont'd:***
 
 Testing in Postman: 
-> Switch to PUT > Body
-> Enter follow the URL format above > SEND Request
+> Switch to PUT > Body > Enter follow the URL format above > SEND Request
 ![Pre-post](https://i.imgur.com/SBHn3qr.png)
 
 Double-check by refreshing in browser at http://localhost:3000/owners
