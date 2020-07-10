@@ -1,6 +1,6 @@
 # Express & Mongo Routing
 
-This is where the Model and Controller parts of MVC come together. It is good practice to practice separation of concerns and keep them in separate files for `models` and `controllers`. In short, avoid co-locating different concerns within the design or code.
+This is where the Model and Controller parts of MVC come together. It is good practice to separate concerns and keep them in different files for `models` and `controllers`. In short, avoid co-locating different concerns within the design or code.
 
 ### Connect Express and Mongo
 
@@ -38,7 +38,7 @@ mongoose.connect('mongodb://localhost:27017/'+'mongosub-database',
 
 module.exports = mongoose;
 ```
-#### Models
+### Models
 **In `models` directory**
 Create a Model (and Schema - also explained in the [Mongoose Basics](https://github.com/tflosse/Cheat-Sheets/blob/master/Basics-Mongoose.md) markdown.)
 
@@ -58,11 +58,16 @@ const Entry = mongoose.model('Entry', entrySchema);
 module.exports = Entry;
 ```
 
-#### Routes
+### Routes
+
+An over-simplified way to look at the Express-Mongo connection is:
+- Express commands determine the route
+- Mongoose commands determine how the data is manipulted
+
 **In `controllers` directory**
 Create (or refactor routes), previous done in Express ([Express Basics](https://github.com/tflosse/Cheat-Sheets/blob/master/Basics-Express.md))
 
-###### Index
+#### Index Route
 ```js
 router.get('/', (req, res) => {
 // Recall Express routes syntax for (request, response)
@@ -74,13 +79,13 @@ router.get('/', (req, res) => {
 });
 ```
 
-##### Create
+#### Create Route
 ```js
 router.post('/', (req, res) => {
     console.log(req.body);
     // optional: helps identify the body of the request
-    if(req.body.readyToEat==="true") req.body.readyToEat = true;
-    else req.body.readyToEat = false;
+    if(req.body.otherProp==="true") req.body.otherProp = true;
+    else req.body.otherProp = false;
     const newData = req.body;
     // enter CRUD with mongoose:
     Entry.create(newData, (err, entry)=> {
@@ -90,7 +95,7 @@ router.post('/', (req, res) => {
 });
 ```
 
-##### Show Route
+#### Show Route
 ```js
 router.get('/:id', (req, res) => {
     // Recall Express used the following
@@ -102,6 +107,12 @@ router.get('/:id', (req, res) => {
     })
 });
 ```
+
+#### Delete Route
+```js
+
+```
+
 
 ##### *Option* to test with Postman
 (Postman markdown [here](https://github.com/tflosse/Cheat-Sheets/blob/master/Postman.md))
