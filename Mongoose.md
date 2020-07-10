@@ -29,7 +29,7 @@ npm init -y
 
 ```js
 npm i mongoose
-// installs mongoose, adds dependencies
+// installs mangoose, adds dependencies
 // + installs additional modules and adds package-lock.json
   "dependencies": {
     "mongoose": "^5.9.22"
