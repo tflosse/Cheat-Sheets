@@ -86,6 +86,29 @@ Create (or refactor routes previously done in [Express](https://github.com/tflos
 | /entries/:id      | PATCH/PUT | update |   
 | /entries/:id      | DELETE | destroy |
 
+#### Seed Route
+Seeding provides "starter data" that can be worked with before added additional documents or data.
+Seed data can either be added as raw data or referencing a js const or json file.
+> The following assumes Seed Data lives in a seedData.js (with `module.exports = seedData`) or seedData.json file in the db directory.
+
+***Note*** that the seed route comes before the show route, since the latter is an "/:id" route. That is to avoid reading "seed" as an id and returning an error.
+```js
+const seedData = require('../db/seedData');
+OR
+const seedData = require('../db/seedData.json');
+
+router.get('/seed', async (req,res) => {
+    await Entry.deleteMany({})
+    // deletes previous existing entries to start over with Seed data 
+    // that requires makign it an async function and using await:
+    //"Wait for entries to be deleted, then insert seed data."
+    Entry.insertMany(seedData, (err, data) => {
+            if (err) console.log(err)
+            else res.send(data)
+        })
+});
+```
+
 #### Index Route
 ```js
 router.get('/', (req, res) => {
@@ -103,9 +126,9 @@ router.get('/', (req, res) => {
 router.post('/', (req, res) => {
     console.log(req.body);
     // optional: helps identify the body of the request
-    if(req.body.otherProp==="true") req.body.otherProp = true;
-    else req.body.otherProp = false;
-    const newData = req.body;
+    // conditional for the booleanProp below is used as a precaution in case Booleans are received as Strings:
+    if(req.body.booleanProp==="true") req.body.booleanProp = true;
+    else req.body.booleanProp = false;
     // enter CRUD with mongoose:
     Entry.create(newData, (err, entry)=> {
         if (err) console.log(err)
@@ -130,24 +153,50 @@ router.get('/:id', (req, res) => {
 #### Delete Route
 ```js
 router.delete('/:id', (req, res) => {
-    // With hard-coded array in Express, the code for the route was:
-        // const deletedEntry = entries.splice(req.params.id, 1);
-        // res.send(deletedEntry);
-    // Mongoose commands give multiple alternatives, consider also "findByIdAndDelete" as well as "Remove" commends
-    Entry.findOneAndDelete(req.params.id, (err, entry) => {
+    Entry.findByIdAndDelete(req.params.id, (err, entry) => {
         if (err) console.log(err)
         else res.send(entry)
     })
 });
 ```
+***Note:*** Mongoose commands give multiple alternatives, consider also `findOneAndDelete()` as well as `Remove()` commands. `findById` methods return the deleted document.
 
 #### Update Route
+```js
+router.put('/:id', (req, res) => {
+    // conditional below serves same purpose as with Post Route:
+    if(req.body.booleanProp==="true") req.body.booleanProp = true;
+    else req.body.booleanProp = false;
+    Entry.findByIdAndUpdate(
+        req.params.id, 
+        req.body, 
+        {new:true},
+        //new true asks to pass back the updated item
+        (err, updatedEntry) => {
+        if (err) console.log(err)
+        else res.send(UpdatedEntry)
+        })
+});
+```
+***Note:*** Similarly to Delete commands, consider alternative commands `findOneAndUpdate()` as well as the generic `Update()` for all.
 
+| HTTP Verb  | Mongoose Commands  |
+| ------------- |:-------------:|
+| POST | create() |
+| GET | find(), findById(), findOne(),   |
+| PUT | updateOne(), findByIdAndUpdate(), findOneAndUpdate() |
+| DELETE | deleteOne(), deleteMany(), findByIdAndDelete(), findByIdAndRemove(), findOneAndDelete(), findOneAndRemove() |
 
+`Replace` commands might also be:
+- `replaceOne()`
+- `findOneAndReplace()`
+
+---
 ##### *Option* to test with Postman
 (Postman markdown [here](https://github.com/tflosse/Cheat-Sheets/blob/master/Server-Side-Guides/Postman.md))
 
-*Fruit Example*
+*Fruits Example:*
+Creating:
 > Switch to POST > Body
 ![Pre-post](https://i.imgur.com/KjnOKCK.png)
 > Enter key:value pairs > SEND request
@@ -160,7 +209,147 @@ Double-check by refreshing in browser at http://localhost:3000/fruits
 "_id": "5f08a017c4476551ffeff190",
 "name": "orange",
 "color": "orange",
+"booleanProp": true,
+"__v": 0
+}
+]
+```
+Deleting:
+> Switch to DELETE > back to Params
+![Pre-post](https://i.imgur.com/CIcewu8.png)
+
+Updating:
+> Switch to PUT > Body
+> Enter key:value pairs to update > SEND Request
+![Pre-post](https://i.imgur.com/mo6gvWw.png)
+
+Double-check by refreshing in browser at http://localhost:3000/fruits
+```js
+[
+{
+"_id": "5f08b790a4b9f5563ebde303",
+"name": "pear",
+"color": "green",
+"readyToEat": false,
+"__v": 0
+},
+{
+"_id": "5f08b7a1a4b9f5563ebde304",
+"name": "plum",
+"color": "purple",
 "readyToEat": true,
+"__v": 0
+}
+]
+```
+
+---
+
+### Relating Models
+
+**In `server.js`**
+Add a controller for the newModel routes:
+```js
+const newModelsController = require('./controllers/newModels');
+app.use('/newModels', newModelsController);
+```
+
+**In `models` directory** 
+Create a new file for a new model:
+> touch newModels.js
+
+```js
+const mongoose = require('../db/connection');
+
+const newModelSchema = new mongoose.Schema({
+    name: { type: String, required: true },
+    entries: [
+        {
+            ref: "Entry",
+            type: mongoose.Schema.Types.ObjectId
+        }
+    ]
+});
+
+const NewModel = mongoose.model("NewModel", newModelSchema)
+module.exports = NewModel;
+```
+**In `controllers` directory** 
+Create a new file for a new model:
+> touch newModels.js
+Create controller routes for this model as follows
+
+```js
+const express = require('express');
+const router = express.Router();
+const NewModel = require('../models/newModels');
+
+//index
+router.get('/', (req, res) =>{
+    NewModel.find({}, 
+        (err, data) => {
+            if (err) console.log(err)
+            else res.send(data)
+        })
+});
+
+// post/create
+router.post('/', (req, res) =>{
+    NewModel.create(
+        {name: req.body.newModelName}, 
+        (err, model) => {
+            if (err) console.log(err)
+            else res.send(model)
+        })
+});
+
+module.exports = router;
+```
+Adding a **route that relates both models**:
+This could be adding an entry to an owner, an author, or adding a tweet to an account, etc. Still in the `newModels.js` **controller** file:
+```js
+// require the Entry model in this newModel file
+const Entry = require('../models/entries');
+// put/add an Entry to the newModel
+router.put('/:newModelId/addEntries/:id', (req, res) => {
+    //require the Fruit route within
+    Entry.findById(req.params.id, (err, entry) => {
+        if (err) console.log(err)
+        else {
+            NewModel.findByIdAndUpdate(
+                req.params.newModelId,
+                {
+                    $push: {
+                        entries: entry.id
+                    }
+                },
+                (err, model) => {
+                    if (err) console.log(err)
+                    else res.send(model)
+                }
+            )
+        }
+    })
+});
+```
+
+***Fruits example cont'd:***
+
+Testing in Postman: 
+> Switch to PUT > Body
+> Enter follow the URL format above > SEND Request
+![Pre-post](https://i.imgur.com/SBHn3qr.png)
+
+Double-check by refreshing in browser at http://localhost:3000/owners
+
+```js
+[
+{
+"fruits": [
+"5f08c91e3e125a5983112bc8"
+],
+"_id": "5f08c91b3e125a5983112bc7",
+"name": "Tamara",
 "__v": 0
 }
 ]

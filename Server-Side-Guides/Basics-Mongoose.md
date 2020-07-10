@@ -37,6 +37,7 @@ npm i mongoose
 touch modelname.js
 // This file will hold the SCHEMA
 ```
+Before diving in, for reference, Mongoose Model Docs [here](https://mongoosejs.com/docs/models.html)
 
 **In `App.js`**
 Mongoose also uses `require`

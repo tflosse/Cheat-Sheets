@@ -90,7 +90,7 @@ This might come as a simple refresher, but CRUD stands for:
 
 #### REST (Representational state transfer)
 
-| URL | HTTP Verb |  Action |
+| URL | HTTP Verb |  Action/Routes |
 |------------|-------------|------------|
 | /photos/         | GET | index |
 | /photos/new      | GET | new |  
