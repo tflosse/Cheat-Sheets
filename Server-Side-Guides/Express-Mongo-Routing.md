@@ -99,7 +99,7 @@ router.post('/', (req, res) => {
 ```js
 router.get('/:id', (req, res) => {
     // Recall Express used the following
-    // res.send(fruits[req.params.id]);
+        // res.send(entries[req.params.id]);
     // Use the same "req.params.id" with mongoose:
     Entry.findById(req.params.id, (err, entry) => {
         if (err) console.log(err)
@@ -110,7 +110,16 @@ router.get('/:id', (req, res) => {
 
 #### Delete Route
 ```js
-
+router.delete('/:id', (req, res) => {
+    // With hard-coded array in Express, the code for the route was:
+        // const deletedEntry = entries.splice(req.params.id, 1);
+        // res.send(deletedEntry);
+    // Mongoose commands give multiple alternatives, consider also "findByIdAndDelete" as well as "Remove" commends
+    Entry.findOneAndDelete(req.params.id, (err, entry) => {
+        if (err) console.log(err)
+        else res.send(entry)
+    })
+});
 ```
 
 
