@@ -1,4 +1,4 @@
-#Express
+# Express
 
 ### Basic Set Up
 
@@ -60,11 +60,20 @@ OR sudo npm i nodemon -g
 // "sudo" overrides permissions - use it sparingly
 ```
 
+**Option** to add a `dev` config to package.json Scripts. this enables the command `npm dev` in the terminal as a shorthand.
+```js
+  "scripts": {
+    "start": "node server.js",
+    "dev": "nodemon server.js"
+}
+```
+
 Create a `.gitignore` file, this prevents files listed within from being pushed to git
 ```js
 touch .gitignore
 // in .gitignore file add
 node_modules
+.DS_Store
 .env
 ```
 
@@ -77,6 +86,20 @@ This might come as a simple refresher, but CRUD stands for:
 | GET | Read |
 | PUT | Update |
 | DELETE | Delete |
+
+
+#### REST (Representational state transfer)
+
+| URL | HTTP Verb |  Action |
+|------------|-------------|------------|
+| /photos/         | GET | index |
+| /photos/new      | GET | new |  
+| /photos          | POST | create | 
+| /photos/:id      | GET | show |      
+| /photos/:id/edit | GET | edit |     
+| /photos/:id      | PATCH/PUT | update |   
+| /photos/:id      | DELETE | destroy |
+
 ###### Put vs. Patch
 In a `PUT` request, the enclosed entity is considered to be a modified version of the resource stored on the origin server, and the client is requesting that the stored version be replaced. With `PATCH`, the enclosed entity contains a set of instructions describing how a resource currently residing on the origin server should be modified to produce a new version. 
 

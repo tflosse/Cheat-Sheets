@@ -140,7 +140,11 @@ module.exports = ModelName;
 // ModelName example:
 const ModelName = mongoose.model("ModelName", ModelNameSchema);
 module.exports = ModelName;
+// or 
+module.exports = mongoose.model("ModelName", ModelNameSchema);
 ```
+Book example:
+![](https://i.imgur.com/co51oOp.png)
 
 ## CRUD with Mongoose:
 **In `App.js`**...
