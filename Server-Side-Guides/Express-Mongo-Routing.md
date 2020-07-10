@@ -8,7 +8,7 @@ In an existing Express app, install Mongoose.
 
 > npm i mongoose
 
-If starting fresh, install both (refer to [Express Basics](https://github.com/tflosse/Cheat-Sheets/blob/master/Basics-Express.md) markdown if starting with Express)
+If starting fresh, install both (refer to [Express Basics](https://github.com/tflosse/Cheat-Sheets/blob/master/Server-Side-Guides/Basics-Express.md) markdown if starting with Express)
 
 Check that your dependencies are installed:
 ```js
@@ -24,7 +24,7 @@ Following the Separation of Concerns Principle, create a separate directory for 
 > touch Connection.js
 
 **In `connection.js`**
-Connect mongoose and mongo, similarly to setting up Mongoose ([Mongoose Basics](https://github.com/tflosse/Cheat-Sheets/blob/master/Basics-Mongoose.md))
+Connect mongoose and mongo, similarly to setting up Mongoose ([Mongoose Basics](https://github.com/tflosse/Cheat-Sheets/blob/master/Server-Side-Guides/Basics-Mongoose.md))
 
 ```js
 const mongoose = require('mongoose');
@@ -40,7 +40,7 @@ module.exports = mongoose;
 ```
 ### Models
 **In `models` directory**
-Create a Model (and Schema - also explained in the [Mongoose Basics](https://github.com/tflosse/Cheat-Sheets/blob/master/Basics-Mongoose.md) markdown.)
+Create a Model (and Schema - also explained in the [Mongoose Basics](https://github.com/tflosse/Cheat-Sheets/blob/master/Server-Side-Guides/Basics-Mongoose.md) markdown.)
 
 ```js
 const mongoose = require('../db/connection.js');
@@ -65,7 +65,7 @@ An over-simplified way to look at the Express-Mongo connection is:
 - Mongoose commands determine how the data is manipulted
 
 **In `controllers` directory**
-Create (or refactor routes), previous done in Express ([Express Basics](https://github.com/tflosse/Cheat-Sheets/blob/master/Basics-Express.md))
+Create (or refactor routes), previous done in Express ([Express Basics](https://github.com/tflosse/Cheat-Sheets/blob/master/Server-Side-Guides/Basics-Express.md), brief recall of RESTful routes also available there).
 
 #### Index Route
 ```js
@@ -124,7 +124,7 @@ router.delete('/:id', (req, res) => {
 
 
 ##### *Option* to test with Postman
-(Postman markdown [here](https://github.com/tflosse/Cheat-Sheets/blob/master/Postman.md))
+(Postman markdown [here](https://github.com/tflosse/Cheat-Sheets/blob/master/Server-Side-Guides/Postman.md))
 
 *Fruit Example*
 > Switch to POST > Body
