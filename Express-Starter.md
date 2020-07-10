@@ -1,6 +1,6 @@
 #Express
 
-###Basic Set Up
+### Basic Set Up
 
 Install basics can also be found here [here](https://expressjs.com/en/starter/installing.html).
 
@@ -68,3 +68,25 @@ node_modules
 .env
 ```
 
+#### CRUD
+This might come as a simple refresher, but CRUD stands for:
+
+| HTTP Verb  | CRUD Operator  |
+| ------------- |:-------------:|
+| POST | Create |
+| GET | Read |
+| PUT | Update |
+| DELETE | Delete |
+###### Put vs. Patch
+In a `PUT` request, the enclosed entity is considered to be a modified version of the resource stored on the origin server, and the client is requesting that the stored version be replaced. With `PATCH`, the enclosed entity contains a set of instructions describing how a resource currently residing on the origin server should be modified to produce a new version. 
+
+### Routing
+
+`Routing` refers to how an application responds to a client request to a particular endpoint, which is a URI (or path) and a specific HTTP request method (GET, POST, etc).
+[Express Routing](https://expressjs.com/en/guide/routing.html)
+
+Each route can have one or more handler functions, which are executed when the route is matched.
+
+```js
+app.method(path, handler)
+```
