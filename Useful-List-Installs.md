@@ -9,9 +9,9 @@
     Updates might be required: 
     > brew update
     - Git
-    > 
+    > brew install git
     - Command Line Tools
-    > 
+    > xcode-select --install (will need to accept CLT License)
     - Mongo
     > brew tap mongodb/brew <br />
     > brew services start mongodb-community@4.2
@@ -54,5 +54,5 @@
     Link to [Download](https://www.mongodb.com/try/download/compass) MongoDB Compass
 
 - Chrome Extensions
-    - JSON Formatter
-    - React Development Tools
+    - JSON Formatter ([Chrome Web Store](https://chrome.google.com/webstore/detail/json-formatter/bcjindcccaagfpapjjmafapmmgkkhgoa?hl=en))
+    - React Development Tools ([Chrome Web Store](https://chrome.google.com/webstore/detail/react-developer-tools/fmkadmapgofadopljbjfkapdkoienihi?hl=en))
