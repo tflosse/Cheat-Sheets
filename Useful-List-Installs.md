@@ -3,6 +3,9 @@
 *Additonally, some brew installed required an update to macOS Catalina (v.10.15)*
 
 - Homebrew
+    Installation info [here](https://brew.sh/) +     [`Docs`](https://docs.brew.sh/)
+    >/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
+
     Updates might be required: 
     > brew update
     - Git
@@ -16,15 +19,26 @@
     > brew tap heroku/brew && brew install heroku
 
 - Node.js
-    Use npm (node package manager for):
+    Link to [Download](https://nodejs.org/en/download/) Node.js + [`Docs`](https://nodejs.org/en/docs/)
+    *Use npm (node package manager for):*
     - React
+    > npx create-react-app `app-name`
     - React Router
+    > npm i react-router
     - React Router DOM
+    > npm i react-router-dom
+    - Node modules
+    > npm init `-y` (for default behavior)
     - Express
+    > npm i express
     - Nodemon
+    > npm i nodemon `-g` (to install globally)
     - Dotenv
+    > npm i dotenv
     - Cors
+    > npm i cors
     - Mongoose
+    > npm i mongoose
 
 - VS Code (Visual Studio)
     - Prettier
@@ -34,6 +48,10 @@
     - Live Server
 
 - Postman
+    Link to [Download](https://www.postman.com/downloads/) Postman
+
+- MongoDB Compass
+    Link to [Download](https://www.mongodb.com/try/download/compass) MongoDB Compass
 
 - Chrome Extensions
     - JSON Formatter
