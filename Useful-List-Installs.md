@@ -10,7 +10,7 @@
     - Command Line Tools
     > 
     - Mongo
-    > brew tap mongodb/brew
+    > brew tap mongodb/brew <br />
     > brew services start mongodb-community@4.2
     - Heroku CLI
     > brew tap heroku/brew && brew install heroku
