@@ -1,6 +1,6 @@
 ## Useful List of Installs
 **Note:** The following commands only apply to Mac OS
-*Additonally, some brew installed required an update to macOS Catalina (v.10.15)*
+*- Additonally, some brew installed required an update to macOS Catalina (v.10.15)*
 
 - Homebrew
     Installation info [here](https://brew.sh/) +     [`Docs`](https://docs.brew.sh/)
@@ -39,6 +39,9 @@
     > npm i cors
     - Mongoose
     > npm i mongoose
+    - Morgan
+    *(works with Express Server, and with Node.js `http` module)*
+    > npm i morgan `--save`
 
 - VS Code (Visual Studio)
     - Prettier
