@@ -32,7 +32,7 @@ npm start
 Additionally, it is good practice to create a `Components` directory and have React Components in `Routes` and `Shared` directories where applicable.
 ej. Routes:
 - Home.jsx
-- Item.jsx
+- Items.jsx
 - ItemCreate.jsx, etc.
 Shared:
 - Nav.jsx
@@ -124,3 +124,62 @@ export default withRouter(App);
 #### Axios
 In the `React App` directory (named `Client` here), install Axios:
 > npm i axios
+
+**In the `Items.jsx` component:**
+
+Break down in comments:
+```js
+import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
+import axios from 'axios';
+
+const Items = (props) => {
+  const [items, setItems] = useState([])
+  useEffect(() => {
+    const makeAPICall = async () => {
+      try {
+        const response = await axios(`http://localhost:3000/api/items`)
+        // localhost:3000 above would be the same as the port in the server.js file
+        // axios is used to make the call
+        setItems(response.data.items)
+      } catch (err) {
+        console.error(err)
+      }
+      // Catches error and "logs" it with conosole.error
+    }
+    makeAPICall()
+  }, [])
+ const itemsArr = items.map( item => ( 
+        <li key={item._id}>
+            <Link to={`/items/${item._id}`}>{item.title}</Link>
+        </li>
+    )
+  )
+    return (
+      <>
+        <h4>Items</h4>
+        <ul>
+          {itemsArr}
+        </ul>
+      </>
+    )
+}
+export default Items;
+```
+
+**Add Items as a Route in `App.js`:**
+```js
+import Home from './Components/routes/Home';
+import Items from './Components/routes/Items';
+// (...)
+// In the App function, now return:
+    <Switch>
+        <Route exact path='/' component={Home} />
+        <Route path='/items' component={Items} />
+    </Switch>
+```
+Ensure the server side is running (in this example `npm run start`) on one port, and react on another. When both are running, clicking on Items from the Nav links, should now render the Items' page (including the items that have been read from the server side).
+
+![example](https://i.imgur.com/s4AI4xx.png)
+
+
