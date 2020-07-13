@@ -320,7 +320,7 @@ const ItemEdit = (props) => {
   useEffect( () => {
        const makeAPICall = async () => {
       try {
-          const response = await axios(`http://localhost:3000/api/items/${props.match.params.id}`)
+          const response = await axios(`http://localhost:3001/api/items/${props.match.params.id}`)
           setItem({ 
             item: response.data.item 
           })
@@ -345,7 +345,7 @@ const ItemEdit = (props) => {
         event.preventDefault()
 
         axios({
-            url: `http://localhost:3000/api/items/${props.match.params.id}`,
+            url: `http://localhost:3001/api/items/${props.match.params.id}`,
             method: 'PUT',
             data: item
         })
@@ -391,16 +391,12 @@ Editing the item should render:
 ```js
 import React, { useState } from "react";
 import axios from "axios";
-import apiUrl from '../../apiConfig';
-
 import ItemForm from "../shared/ItemForm";
 import Layout from "../shared/Layout";
-
 const ItemCreate = (props) => {
     console.log('ItemCreate props', props)
   const [input, setInput] = useState({ title: "", link: "" });
   const [item, setItem] = useState(null);
-
   const handleChange = (event) => {
     console.log("event", event.target.name, event.target.value);
     setInput({
@@ -408,13 +404,11 @@ const ItemCreate = (props) => {
       [event.target.name]: event.target.value,
     });
   };
-
   const handleSubmit = (event) => {
-  
     event.preventDefault();
     console.log("handleSubmit");
     axios({
-      url: `${apiUrl}/items`,
+      url: `http://localhost:3001/api/items`,
       method: "POST",
       data: input,
     })
@@ -424,7 +418,6 @@ const ItemCreate = (props) => {
         })
       .catch(console.error);
   };
-
   return (
     <Layout>
       <ItemForm
@@ -436,7 +429,6 @@ const ItemCreate = (props) => {
     </Layout>
   );
 };
-
 export default ItemCreate;
 ```
 
