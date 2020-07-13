@@ -42,6 +42,8 @@
     - Morgan
     *(works with Express Server, and with Node.js `http` module)*
     > npm i morgan `--save`
+    - Axios
+    > npm i axios
 
 - VS Code (Visual Studio)
     - Prettier
