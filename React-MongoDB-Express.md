@@ -33,7 +33,9 @@ Additionally, it is good practice to create a `Components` directory and have Re
 ej. Routes:
 - Home.jsx
 - Items.jsx
-- ItemCreate.jsx, etc.
+- Item.jsx
+- ItemCreate.jsx
+- ItemEdit.jsx
 
 Shared:
 - Nav.jsx
@@ -139,7 +141,7 @@ const Items = (props) => {
   useEffect(() => {
     const makeAPICall = async () => {
       try {
-        const response = await axios(`http://localhost:3000/api/items`)
+        const response = await axios(`http://localhost:3001/api/items`)
         // localhost:3000 above would be the same as the port in the server.js file
         // axios is used to make the call
         setItems(response.data.items)
@@ -183,4 +185,287 @@ Ensure the server side is running (in this example `npm run start`) on one port,
 
 ![example](https://i.imgur.com/s4AI4xx.png)
 
+**In the `Item.jsx` component:**
 
+```js
+import React, { useState, useEffect } from 'react'
+import { Link, Redirect } from 'react-router-dom'
+import axios from 'axios'
+
+import Layout from '../shared/Layout'
+
+const Item = (props) =>  {
+  const [item,setItem] = useState(null)
+  const [isDeleted,setIsDeleted] = useState(false)
+
+  useEffect(() => {
+    const makeAPICall = async () => {
+      try {
+          const response = await axios(`http://localhost:3001/api/items/${props.match.params.id}`)
+          console.log('Item - response', response)
+          setItem(response.data.item)
+        } catch (err) {
+          console.error(err)
+        }
+  
+   }
+  makeAPICall()
+  }, [])
+
+  const destroy = async () => {
+    const response = await axios({
+      url: `http://localhost:3001/api/items/${props.match.params.id}`,
+      method: 'DELETE'
+    })
+    setIsDeleted(true)
+  }
+
+    if (!item) {
+      return <p>Loading...</p>
+    }
+
+    if (isDeleted) {
+      return <Redirect to={
+        { pathname: '/', state: { msg: 'Item succesfully deleted!' } }
+      } />
+      // Redirect is used to go to the new URL
+    }
+
+    return (
+      <Layout>
+        <h4>{item.title}</h4>
+        <p>Link: {item.link}</p>
+        <button onClick={destroy}>Delete Item</button>
+        <Link to={`/items/${props.match.params.id}/edit`}>
+          <button>Edit</button>
+        </Link>
+        <Link to="/items">Back to all items</Link>
+      </Layout>
+    )
+}
+
+export default Item;
+```
+ **Update `App,js` to include this `Item route`:**
+
+ ```js
+ import Home from '../components/routes/Home'
+import Items from './components/routes/Items'
+import Items from './components/routes/Item'
+
+const App = props => (
+  <>
+    <Switch>
+      <Route exact path='/' component={Home} />
+      <Route path="/items/:id" component={Item} />
+      // Item route should be above the items route because of Switch, 
+      // alternatively, use the "exact" key word for the '/items' route.
+      <Route path='/items' component={Items} />
+    </Switch>
+  </>
+);
+```
+**Create an `ItemForm.jsx`**
+`ItemForm.jsx` will be used to create and edit Items, so it can be create in the `shared` directory.
+```js
+import React from 'react';
+import { Link } from 'react-router-dom';
+
+const ItemForm = ({ item, handleSubmit, handleChange, cancelPath }) => {
+    console.log('ItemForm', item)
+  
+  return (
+    <form onSubmit={handleSubmit}>
+        <label>Title</label>
+        <input
+        placeholder='add a title'
+        value={item.title}
+        name="title"
+        onChange={handleChange}
+        />
+
+        <label>Link</label>
+        <input
+        placeholder='add a link'
+        value={item.link}
+        name="link"
+        onChange={handleChange}
+        />
+
+        <button type="submit">Submit</button>
+        <Link to={cancelPath}>
+        <button>Cancel</button>
+        </Link>
+    </form>
+    )
+}
+
+export default ItemForm;
+```
+
+**In `ItemEdit.jsx`, use the ItemForm:**
+```js
+import React, { useState, useEffect } from 'react';
+import { Redirect } from 'react-router-dom';
+import axios from 'axios';
+
+import ItemForm from '../shared/ItemForm';
+import Layout from '../shared/Layout';
+
+const ItemEdit = (props) => {
+  console.log('ItemEdit - props', props)
+  const [item, setItem] = useState({title: '', link: ''})
+  const [isUpdated,setIsUpdated] = useState(false)
+
+  useEffect( () => {
+       const makeAPICall = async () => {
+      try {
+          const response = await axios(`http://localhost:3000/api/items/${props.match.params.id}`)
+          setItem({ 
+            item: response.data.item 
+          })
+        } catch (err) {
+          console.error(err)
+        }
+  
+   }
+  makeAPICall()
+
+  }, [])
+
+  const handleChange = event => {
+        setItem({
+          ...item,
+          // use spred operator to get the content rather than the array or object structure
+          [event.target.name]: event.target.value
+        })
+    }
+
+    const handleSubmit = event => {
+        event.preventDefault()
+
+        axios({
+            url: `http://localhost:3000/api/items/${props.match.params.id}`,
+            method: 'PUT',
+            data: item
+        })
+            .then(() => setIsUpdated(true))
+            .catch(console.error)
+    }
+
+        if (isUpdated) {
+            return <Redirect to={`/items/${props.match.params.id}`} />
+        }
+
+        return (
+            <Layout>
+                <ItemForm
+                    item={item}
+                    handleChange={handleChange}
+                    handleSubmit={handleSubmit}
+                    cancelPath={`/items/${props.match.params.id}`}
+                />
+            </Layout>
+        )
+}
+
+export default ItemEdit;
+```
+
+**Update `App.js`:**
+```js
+import ItemEdit from './components/routes/ItemEdit';
+// (...)
+    <Switch>
+        <Route exact path='/' component={Home} />
+        <Route path="/items/:id/edit" component={ItemEdit} />
+        <Route path='/items/:id' component={Item} />
+        <Route path='/items' component={Items} />
+    </Switch>
+```
+Editing the item should render:
+![EditItem](https://i.imgur.com/05rPHIY.png)
+
+**Lastly, in `CreateItem.jsx`:**
+
+```js
+import React, { useState } from "react";
+import axios from "axios";
+import apiUrl from '../../apiConfig';
+
+import ItemForm from "../shared/ItemForm";
+import Layout from "../shared/Layout";
+
+const ItemCreate = (props) => {
+    console.log('ItemCreate props', props)
+  const [input, setInput] = useState({ title: "", link: "" });
+  const [item, setItem] = useState(null);
+
+  const handleChange = (event) => {
+    console.log("event", event.target.name, event.target.value);
+    setInput({
+      ...input,
+      [event.target.name]: event.target.value,
+    });
+  };
+
+  const handleSubmit = (event) => {
+  
+    event.preventDefault();
+    console.log("handleSubmit");
+    axios({
+      url: `${apiUrl}/items`,
+      method: "POST",
+      data: input,
+    })
+      .then((res) => {
+          setItem({ createdItem: res.data.item })
+          props.history.push('/items')
+        })
+      .catch(console.error);
+  };
+
+  return (
+    <Layout>
+      <ItemForm
+        item={input}
+        handleChange={handleChange}
+        handleSubmit={handleSubmit}
+        cancelPath="/"
+      />
+    </Layout>
+  );
+};
+
+export default ItemCreate;
+```
+
+**Update `App.js`:**
+In the end, it should look like this:
+
+```js
+import React from 'react';
+import {Route, Switch, withRouter} from 'react-router-dom';
+import Home from './Components/routes/Home';
+import Items from './Components/routes/Items';
+import Item from './Components/routes/Item';
+import ItemEdit from './Components/routes/ItemEdit';
+import ItemCreate from './Components/routes/ItemCreate';
+import './App.css';
+
+function App() {
+  return (
+    <>
+      <Switch>
+        <Route exact path='/' component={Home} />
+        <Route path="/items/:id/edit" component={ItemEdit} />
+        <Route path='/items/:id' component={Item} />
+        <Route path='/items' component={Items} />
+        <Route path='/create-item' component={ItemCreate} />
+      </Switch>
+    </>
+  )
+};
+
+export default withRouter(App);
+```
