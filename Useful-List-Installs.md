@@ -44,6 +44,8 @@
     > npm i morgan `--save`
     - Axios
     > npm i axios
+    - Surge
+    > npm i `--global` surge
 
 - VS Code (Visual Studio)
     - Prettier
