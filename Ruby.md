@@ -631,3 +631,166 @@ fizzbuzz(30)
 
 # => {:fizzbuzz=>[15, 30], :fizz=>[3, 6, 9, 12, 18, 21, 24, 27], :buzz=>[5, 10, 20, 25], :other=>[1, 2, 4, 7, 8, 11, 13, 14, 16, 17, 19, 22, 23, 26, 28, 29]}
 ```
+
+
+## Ruby blocks
+
+`forEach`
+```js
+const myArray = ['one', 'two', 'three'];
+myArray.forEach((str)=>{
+	console.log('the value is ' + str);
+});
+```
+```ruby
+['one', 'two', 'three'].each do |str|
+	puts 'the value is ' + str
+end
+# becomes
+['one', 'two', 'three'].each { |str| puts 'the value is ' + str } #short form
+```
+`map`
+```js
+const basicArray = [1,2,3];
+const timesTwo = basicArray.map((num)=>{
+  return num * 2;
+});
+
+console.log(timesTwo);
+```
+```ruby
+times_two = [1,2,3].map do |num|
+	num * 2
+end
+p times_two
+# becomes
+p [1,2,3].map {|num| num * 2}
+# brackets replace "do ... end"
+```
+`Named blocks`
+```js
+const each = (array, callback)=>{
+	for(let i = 0; i < array.length; i++){
+		callback(array[i]);
+	}
+}
+
+each([1,2,3,4], (currentNum)=>{
+	console.log(currentNum);
+});
+```
+```ruby
+def each(arr, &blk) #&blk must always be the last parameter
+# creates a names block
+	for elem in arr
+    blk.call(elem)
+    # .call is used in Ruby
+	end
+end
+
+each 0...5 do |currentNum|
+	puts currentNum
+end
+```
+`implicitly`
+```ruby
+def each(arr)
+	for elem in arr
+		yield(elem) #use this instead of &blk.call
+	end
+end
+
+each 0...5 do |currentNum|
+	puts currentNum
+end
+```
+
+## Procs (procedures)
+[Procs in Ruby](https://ruby-doc.org/core-2.6/Proc.html)
+
+```js
+const foo = ()=>{
+	console.log('hi');
+}
+
+const bar = (callback)=>{
+	callback();
+}
+bar(foo)
+```
+```ruby
+foo = Proc.new do
+    puts 'hi'
+end
+# or
+foo = Proc.new {puts "hi"}
+# then
+def bar(callback)
+    callback.call()
+end
+
+bar(foo)
+
+# Procs can also take variable
+log = Proc.new do |el|
+	puts el
+end
+log.call(5)
+
+# short version:
+log = Proc.new {|el| puts el}
+log.call(5)
+```
+
+## Ruby Enumarables
+
+`Select, detect, reject`
+
+```ruby
+p [1,2,3,4,5].select { |i| i > 3 } #returns [4,5]
+# compares to filter in Js
+p [1,2,3,4,5].detect { |i| i > 3 } #returns [4]
+# compares to find in JS
+p [1,2,3,4,5].reject { |i| i > 3 } #returns [1,2,3] 
+# also analogous as filter (opposite select)
+```
+
+`Grep`
+Returns an array of every element that match a pattern
+```ruby
+p [1,3,5,10,15].grep (1..5) #returns [1,3,5]
+p [0.3, "three", :three, "thirty-three"].grep /three/ #returns ["three", :three, "thirty-three"]
+
+# If an optional block is supplied, each matching element is passed to it
+p [1,3,5,10,15].grep (1..5) {|i| i * 3} #returns [3,9,15]
+```
+
+`sort`
+```ruby
+p ['squirtle', 'mew', 'charmeleon', 'pikachu'].sort
+p ['squirtle', 'mew', 'charmeleon', 'pikachu'].sort_by { |word| word.length}
+p [2, 5, 1, 3].sort #returns [1, 2, 3, 5]
+
+# with different data types
+p [2, "hello", 1, "what"].sort #ArgumentError: comparison of Fixnum with String failed
+p [2, "hello", 1, "what"].sort_by(&:to_i) #["hello", "what", 1, 2]
+p [2, "hello", 1, "what"].sort_by(&:to_s) #[1, 2, "hello", "what"]
+```
+
+`any, all`
+```ruby
+# any
+p %w(mew pikachu).any? { |word| word.length <= 3 } #returns true
+
+#all
+p %w(mew pikachu).all? { |word| word.length <= 3 } #returns false
+p %w(mew cat her the).all? { |word| word.length <= 3 } #returns true
+```
+
+`reduce`
+Reduce takes a collection and reduces it down to a single element. It applies an operation to each element, maintaining a running “total.”
+```ruby
+p (5..10).reduce(:+) #returns 45
+p (1..4).reduce(:*) #returns 24
+p [5, 6, 7].reduce(5, :+) #returns 23
+```
