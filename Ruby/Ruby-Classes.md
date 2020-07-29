@@ -7,6 +7,10 @@
 
 > A declarative approach (WHAT): “Table for two, please.”
 
+Declarative languages contrast with imperative languages which specify explicit manipulation of the computer’s internal state; or procedural languages which specify an explicit sequence of steps to follow.
+
+In computer science, declarative programming is a programming paradigm that expresses the logic of a computation without describing its control flow.
+
 ```js 
 // Imperative for afunction called double which takes in an array of numbers and returns a new array after doubling every item in that array.
 function double (arr) {
@@ -186,4 +190,51 @@ your_truck.check_mileage
 ```
 
 Car class does not inherit the `@this_odometer` and `@this_gas_used` instance variables, but it does inherit `odometer=` and `gas_used=` instance methods.
+
+ **Class method**: 
+ Associated with a class (and with a module in Ruby), not with an instance of a class. Invoke class methods by prefixing the name of the method with the name of the class to which it belongs, such as to `Math.sqrt(36)`. Class methods are also called static methods.
+
+```ruby
+# Class Employee was created
+@@base_salary= 1000
+def Employee.print
+    puts @@base_salary
+end
+
+def set_base_salary(salary)
+    @@base_salary = salary
+end
+
+s = Employee.new("John", 100)
+s.print_my_info
+Employee.print
+# => John
+# 100
+# 1000
+s.set_base_salary(1250.87)
+s.print_my_info
+Employee.print
+# => John
+# 100
+# 1250.87
+```
+
+**Super Method**:
+The keyword `super` is used to call the superclass implementation of the current method, if overriding a class’s method in a subclass, or extending the behavior of the superclass, rather than totally replacing it.
+
+In the previous example, add:
+
+```ruby
+class Car < Vehicle
+    def sound_horn
+      super
+    puts "Coming through"
+  end
+end
+
+my_car = Car.new(10000, 45)
+my_car.sound_horn
+# => Beep! Beep!
+# Coming through
+```
 
