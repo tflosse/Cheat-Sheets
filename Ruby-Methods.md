@@ -417,6 +417,14 @@ hash
 #=> {"cat"=>0, "dog"=>1, "wombat"=>2}
 ```
 
+`group_by`
+- `group_by { |obj| block }` → a_hash
+- `group_by` → an_enumerator
+Groups the collection by result of the block. Returns a hash where the keys are the evaluated result from the block and the values are arrays of elements in the collection that correspond to the key.
+```ruby
+(1..6).group_by { |i| i%3 }   #=> {0=>[3, 6], 1=>[1, 4], 2=>[2, 5]}
+```
+
 `map`
 - `map { |obj| block }` → array
 - `map` → an_enumerator
