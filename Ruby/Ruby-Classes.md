@@ -1,5 +1,7 @@
 # Ruby Classes
 
+[Ruby Class Docs](https://ruby-doc.org/core-2.7.1/Class.html)
+
 **OOP:** organizes software design around data, or objects, rather than functions and logic. An object can be defined as a data field that has unique attributes and behavior.
 
 ![](https://i.imgur.com/Rsol5Kv.png)
@@ -53,6 +55,7 @@ $("#btn").click(function() {
     {this.state.buttonText}
 </Btn>
 ```
+![](https://i.imgur.com/bxYuk6a.png)
 
 **Objects** store and manage any state or data relevant to the object itself internally and we use methods to initialize, modify, or act on an objects' internal state. We define a single ***class*** with all of this behavior described in one place.
 
@@ -120,9 +123,9 @@ p casey_house.get_address
 - **Local** variables: local scope or context. If defined within a method, its scope is kept within that method. Local variable names must begin with either a lowercase letter or an underscore (_), and must not be prefixed with punctuation reserved for other variables.
 > y = "Yes"  # y is a String
 
-- **Instance** variables: belongs to a particular instance of a class, hence the name. It can only be accessed from outside that instance via an accessor (helper) method. Instance variables are always prefixed with a single at sign (@), as in @hello.
+- **Instance** variables: belong to a particular instance of a class, hence the name. It can only be accessed from outside that instance via an accessor (helper) method. Instance variables are always prefixed with a single at sign (@), as in @hello.
 
-- **Class** variables: is shared among all instances of a class. Only one copy of a class variable exists for a given class. It is prefixed by two at signs (@@), such as @@times. It needs to be initialized to be used.
+- **Class** variables: are shared among all instances of a class. Only one copy of a class variable exists for a given class. It is prefixed by two at signs (@@), such as @@times. It needs to be initialized to be used.
 
 - **Global** variables: are globally available to a program, inside any structure. Their scope is the whole program. They are prefixed by a dollar sign ($), such as $amount.
 
@@ -132,6 +135,8 @@ p casey_house.get_address
 > name, grade, gpa = 'Suresh', 89, 3.6
 
 #### Inheritance
+
+[Useful References](http://rubylearning.com/satishtalim/ruby_inheritance.html)
 
 Moves the common methods to a single class, and allows us to specify that other classes inherit from this class. **Subclasses inherit methods from a **superclass**.
 
@@ -236,5 +241,29 @@ my_car = Car.new(10000, 45)
 my_car.sound_horn
 # => Beep! Beep!
 # Coming through
+```
+
+#### `attr_accessor`
+
+`attr_accessor` is a keyword that tells Ruby to define "accessor" methods on the instance. Accessor methods are both the "get" and "set" method for the symbol passed in.
+
+```ruby
+```
+
+```ruby
+class Vehicle
+  attr_reader :this_odometer
+ # (...) 
+end
+
+p my_car.this_odometer
+# => 10000
+
+# Changing it to 
+attr_accessor :this_odometer
+# Will allow to make changes 
+my_car.this_odometer = 3000
+p my_car.this_odometer
+# => 3000
 ```
 
