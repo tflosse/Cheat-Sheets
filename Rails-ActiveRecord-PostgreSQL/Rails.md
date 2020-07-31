@@ -153,6 +153,7 @@ blog_app_api_development=# SELECT * FROM posts;
 
 blog_app_api_development=# \q
 ```
+****
 
 ### Creating and managing models
 
@@ -253,6 +254,119 @@ Ruby Docs for Querying here: [ActiveRecord Querying](https://guides.rubyonrails.
 Some other examples in the rails console:
 ![crud in rails with hirb](https://i.imgur.com/nJzQMyh.png)
 
+****
+
+### Migrations for modifying Schemas
+
+#### Adding a column:
+```
+rails g migration AddDescriptionToTodos
+
+<!-- To delete a migration -->
+rails destroy migration <name_of_migration>
+```
+In the `.rb file` created for the migration:
+```rb
+class AddDescriptionToTodos < ActiveRecord::Migration
+  def change
+    # Method    Table   Column       Datatype
+    add_column :todos, :description, :string
+  end
+end
+```
+Then run `rails db:migrate`
+
+Double-check in the `rails dbconsole` with a SQL command (SELECT * FROM todos) or is `rails console` with ActiveRecord command (Todo.all) or **`Todo.column_names`
+```
+irb(main):003:0> Todo.column_names
+=> ["id", "title", "completed", "description"]
+```
+
+You can also check the `schema.rb` file:
+```rb
+ActiveRecord::Schema.define(version: 2020_07_31_200728) do
+
+  # These are extensions that must be enabled in order to support this database
+  enable_extension "plpgsql"
+
+  create_table "todos", force: :cascade do |t|
+    t.string "title"
+    t.boolean "completed"
+    t.string "description"
+  end
+
+end
+```
+
+#### Changing a column:
+```
+rails g migration ChangeDescriptionInTodosToDetails
+```
+In the `.rb file` created for the migration:
+```rb
+class ChangeDescriptionInTodosToDetails < ActiveRecord::Migration[6.0]
+  def change
+    # Method      Table     Column       New name
+    rename_column :todos, :description, :description
+  end
+end
+```
+Then run `rails db:migrate`
+
+You can also check the `schema.rb` file:
+```rb
+ActiveRecord::Schema.define(version: 2020_07_31_200728) do
+
+  # These are extensions that must be enabled in order to support this database
+  enable_extension "plpgsql"
+
+  create_table "todos", force: :cascade do |t|
+    t.string "title"
+    t.boolean "completed"
+    t.string "details"
+  end
+
+end
+```
+
+#### Removing a column:
+```
+rails g migration RemoveDetailsInTodos
+```
+In the `.rb file` created for the migration:
+```rb
+class ChangeDescriptionInTodosToDetails < ActiveRecord::Migration[6.0]
+  def change
+    # Method      Table     Column    Type
+    remove_column :todos, :details, :string
+  end
+end
+```
+Then run `rails db:migrate`
+
+****
+
+### Lastly, going back on mistakes:
+```sql
+rails db:rollback
+-- Rolls back the last migration.
+
+rails db:migrate VERSION=n
+-- To go to back to n migrates to that version number, where the version numbers come from listing the migrations sequentially.
+
+rails db:reset
+-- To re-do your migrations from the beginning, AND seed the database
+
+rails destroy migration NameOfMigration
+-- To delete a migration
+
+-- Note: It is advisable only to delete the final migration, and that that migration has not already been run. This is because successive migrations usually depend on one another.
+
+rails d migration NameOfMigration
+-- Shorthand, destroy can be written as d
+```
+
+****
 
 ###### Below is a "easy-to-navigate" console response with rails options:
 ```
