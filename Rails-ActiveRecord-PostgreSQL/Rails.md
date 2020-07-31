@@ -258,6 +258,8 @@ Some other examples in the rails console:
 
 ### Migrations for modifying Schemas
 
+Ruby [Migrations](https://guides.rubyonrails.org/v3.2/migrations.html)
+
 #### Adding a column:
 ```
 rails g migration AddDescriptionToTodos
@@ -345,6 +347,105 @@ end
 Then run `rails db:migrate`
 
 ****
+
+### Creating another model:
+
+Here are docs for Association: [Active Records Assoc.](https://edgeguides.rubyonrails.org/association_basics.html)
+
+Run the same commands as the first one, and note the changes in `schema.rb`:
+```
+rails g migration CreateUsers
+rails db:migrate
+```
+```rb
+class CreateUsers < ActiveRecord::Migration[6.0]
+  def change
+    create_table :users do |t|
+      t.string :name
+    end
+  end
+end
+```
+```rb
+ActiveRecord::Schema.define(version: 2020_07_31_203959) do
+
+  # These are extensions that must be enabled in order to support this database
+  enable_extension "plpgsql"
+
+  create_table "todos", force: :cascade do |t|
+    t.string "title"
+    t.boolean "completed"
+  end
+
+  create_table "users", force: :cascade do |t|
+    t.string "name"
+  end
+
+end
+```
+
+We will want this User to have an ID in Todos:
+```
+rails g migration AddUserIdToTodos
+```
+```rb
+class AddUserIdToTodos < ActiveRecord::Migration[6.0]
+  def change
+    add_column :todos, :user_id, :integer
+  end
+end
+```
+```
+rails db:migrate
+```
+Added `t.integer "user_id"` in the Todo model (`schema.rb`).
+User id: 22
+Todo user_id: 22
+> PostgreSQL: SELECT * FROM todos WHERE user_id = 22;
+
+> ActiveRecord: User.find(22).todos.all
+
+Next, we will want to make changes in `app` > `models`
+```
+touch user.rb
+```
+`user.rb`
+```rb
+class User < ApplicationRecord
+    has_many :todos
+end
+```
+`todo.rb`
+```rb
+class Todo < ApplicationRecord
+    belongs_to :user
+end
+```
+
+In `rails console` you can then:
+```sql
+User.create(name: "John")
+user = User.find(1)
+user.todos.create(title: "Learn migrations and ActiveRecord", completed: false)
+User.find(1).todos.all
+--  same as user = User.find(1) then user.todos.all
+Todo.where(user_id: 1) 
+-- or
+Todo.where(user_id: user.id)
+```
+
+### Seeding
+
+Entry follow this model
+```rb
+Model.create({ column: data, column: data })
+
+# For instance:
+User.create([{ name: "Neff" }, { name: "Jacc" }, { name: "Snoop" }])
+Todo.create(title: "Accentuate the Positive", completed: false, user_id: 1)
+```
+Then run `rails db:seed`
+
 
 ### Lastly, going back on mistakes:
 ```sql
