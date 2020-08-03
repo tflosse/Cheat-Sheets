@@ -65,6 +65,8 @@ Running via Spring preloader in process 17804
 ```
 ![db folder](https://i.imgur.com/fsxr2Ex.png)
 
+As an alternative to generating a migration, we can generate a model: `rails generate model todo` which will create the model file `todo.rb` in the Models folder AND the migration file.
+
 ```ruby
 class CreateTodos < ActiveRecord::Migration[6.0]
   def change
@@ -467,6 +469,38 @@ rails d migration NameOfMigration
 -- Shorthand, destroy can be written as d
 ```
 
+****
+
+#### Basic ActiveRecord Commands
+Create
+```
+.new (will instantiate but not save)
+.save (to create persistence, commit to database)
+.create (same as entering .new then .save)
+```
+Read
+```
+.all (returns all objects of a class/records in a table)
+.first (first record)
+.last (last record)
+.count (the number of records)
+.order (defaults ASC, can also be DESC)
+.find (to retrieve a record by ID)
+.find_by (will return a single record, first match)
+.where (will return all records that match given attribute)
+.pluck (to select only specific value(s) of records)
+```
+Update
+```
+.update (instance method, update single record with attribute)
+.update_all (class method, update all records with attribute)
+```
+Delete
+```
+.destroy (to destroy a record after retrieving with .find_by)
+.destroy_by (to delete multiple records by a specific attribute(s))
+.destroy_all (all records of a table/all instances of a class)
+```
 ****
 
 ###### Below is a "easy-to-navigate" console response with rails options:
