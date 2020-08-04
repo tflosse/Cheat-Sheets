@@ -299,6 +299,149 @@ With relations built and data seeded, ActiveRecord commands can call data across
 
 ![activerec](https://i.imgur.com/ZuSu1WY.png)
 
+#### User stories and app-specific needs
+
+We might want to make changes or require specific routes base don what the users can or cannot do.
+
+> In this example, Limit location routes only to index and show, since:
+
+- User should not be able to add or edit locations.
+- User should be able to view a list of locations and information for each location.
+
+In `routes.db` (< Config):
+```rb
+Rails.application.routes.draw do
+  resources :temperatures
+  resources :locations, only: [:index, :show]
+  # For details on the DSL available within this file, see https://guides.rubyonrails.org/routing.html
+end
+```
+***This limits routes to `index` and `show`***
+
+In the controllers (locations), we can remove or comment out the code we don't need, make changes to the `before_action` (explained below)
+
+![controller](https://i.imgur.com/O57wcZG.png)
+
+```rb
+class LocationsController < ApplicationController
+  before_action :set_location, only: [:show]
+
+  # GET /locations
+  def index
+    @locations = Location.all
+
+    render json: @locations
+  end
+
+  # GET /locations/1
+  def show
+    render json: @location
+  end
+
+  private
+    # Use callbacks to share common setup or constraints between actions.
+    def set_location
+      @location = Location.find(params[:id])
+    end
+
+end
+```
+
+> We might also want to Limit temperature routes only to index and create, if we had such user stories:
+
+- User should be able to view temperature records associated with a location.
+- User should be able to add temperature data for a given location.
+
+Still in `routes.db`
+```rb
+Rails.application.routes.draw do
+  resources :temperatures, only: [:index, :create]
+  resources :locations, only: [:index, :show]
+  # For details on the DSL available within this file, see https://guides.rubyonrails.org/routing.html
+end
+```
+***This limits routes to `index` and `create`***
+
+![routes](https://i.imgur.com/lD2g19C.png)
+
+While we can request to show one location, showing one temparature alone will not work.
+![loc show](https://i.imgur.com/EqiRsxK.png)
+![temp show](https://i.imgur.com/bgfOUKP.png)
+
+Again, depending on the needs of the App, we might use other filters or callbacks, like `before_action` called above. 
+
+`before_action` is a callback that is performed before an action is executed and can be used to halt the request cycle. Common use cases for using `before_action` might be:
+- confirm user is logged in
+- checking for permissions to resource
+
+**The problem here is that we are not getting temparatures for one location...**
+
+The location routes (`show`) needs to be changed to allow that:
+```rb
+ # GET /locations/1
+  def show
+    location_temps = @location.temperatures
+    render json: {
+      location: @location, 
+      temperatures: location_temps
+    }
+  end
+  ```
+![updated location](https://i.imgur.com/vwUWr2K.png)
+
+The format might cause issues parsing data and using it. `to_json` will allow us to keep a more managable format:
+```rb
+def show
+    location_temps = @location.temperatures
+    render json: @location.to_json(include: :temperatures)
+end
+```
+![json format](https://i.imgur.com/eAoKAbd.png)
+
+We'll change the `index` route to have the same format:
+```rb
+def index
+    @locations = Location.all
+    render json: @locations.to_json(include: :temperatures)
+end
+```
+![nested temp](https://i.imgur.com/PkpEhAp.png)
+
+**Do the same in `temperatures_controller` but with *nested* routes**
+
+In `routes.db`
+```rb
+Rails.application.routes.draw do
+  resources :temperatures, only: [:index]
+  resources :locations, only: [:index, :show]
+  resources :temperatures, only: [:create]
+  # For details on the DSL available within this file, see https://guides.rubyonrails.org/routing.html
+end
+```
+
+| Prefix Verb | URI Pattern |             Controller#Action |
+| :---: | :---: | :----:|
+| temperatures GET | /temperatures(.:format) | temperatures#index |
+| location_temperatures POST | /locations/:location_id/temperatures(.:format) | temperatures#create |
+| locations GET | /locations(.:format)|locations#index |
+| location GET | /locations/:id(.:format) | locations#show |
+
+Change the `create` route to:
+```rb
+# POST /temperatures
+def create
+    @temperature = Temperature.new(temperature_params)
+    @temperature.location_id = params[:location_id]
+
+    if @temperature.save
+        render json: @temperature, status: :created
+    else
+        render json: @temperature.errors, status: :unprocessable_entity
+    end
+end
+```
+
+
 
 
 
