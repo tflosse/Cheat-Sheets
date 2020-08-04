@@ -442,6 +442,9 @@ def create
 end
 ```
 
+Testing it in Postman:
+![post](https://i.imgur.com/1HLE2T8.png)
+![terminal response](https://i.imgur.com/GZqAvYa.png)
 
 
 
