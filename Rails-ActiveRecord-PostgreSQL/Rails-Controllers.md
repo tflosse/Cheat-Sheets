@@ -235,6 +235,70 @@ Using cURL:
 
 > curl -X DELETE localhost:3000/songs/13
 
+### One-to-many
+
+##### New tools in Rails
+**Scaffholding**
+Rails is so developer friendly that it even has a command to help scaffold an app with following:
+
+- Controller
+- Model
+- A Migration
+- Routes
+- Views for every standard controller action (index, edit, show, new)
+
+```rb
+rails g scaffold model_name lat:decimal lng:decimal name
+# => model name followed by keys
+```
+
+We now have boilerplate files and code to:
+
+- db/migrate
+- app/models
+- config/routes.rb
+- app/controllers
+
+**Foreign Keys**
+> e.j.: If Locations have many Temperatures, and a Temperature belongs to a Location...
+
+The foreign key would belong to the many.
+
+```rb
+rails g migration AddForeignKeyToTemperatures
+```
+In the generated migration file, we'll want to build a relationship by adding the foreign key:
+```rb
+class AddForeignKeyToTemperatures < ActiveRecord::Migration[6.0]
+  def change
+    add_column :temperatures, :location_id, :integer
+  end
+end
+```
+![schema](https://i.imgur.com/FXbtoYi.png)
+
+Now that we have a schema.rb, add those relations to models:
+`Location`:
+```rb
+class Location < ApplicationRecord
+    has_many :temperatures
+end
+```
+`Temperature`:
+```rb
+class Temperature < ApplicationRecord
+    belongs_to :location
+end
+```
+Once data is seeded, starting the server should allow to get locations, and temperatures -- which should include a `location_id`
+
+![locations](https://i.imgur.com/Ddxjtiq.png)
+![temperatures](https://i.imgur.com/OeUMavi.png)
+
+With relations built and data seeded, ActiveRecord commands can call data across tables (temparatues for one location or the location associated with one temperature specifically)
+
+![activerec](https://i.imgur.com/ZuSu1WY.png)
+
 
 
 
