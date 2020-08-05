@@ -97,6 +97,8 @@ Conceptually:
 ```rb
 rails g scaffold ledger trader:references commodity:references qty:integer
 ```
+**Note:** the type references is just Rails shorthand for whatever_id (foreign key) with some added extra like validation and indexing and will add some boilerplate code for you in the model.
+
 Migration will be created as:
 ```rb
 class CreateLedgers < ActiveRecord::Migration[6.0]
