@@ -446,6 +446,125 @@ Testing it in Postman:
 ![post](https://i.imgur.com/1HLE2T8.png)
 ![terminal response](https://i.imgur.com/GZqAvYa.png)
 
+### Using it with React
+
+In `Gemfile` comment `cors-rack` back in, and run 
+> bundle
+
+Then in initializers, find `cors.rb` file and comment in the code nd change `origins` to be **'*'** to allow URLs access:
+
+```rb
+# Be sure to restart your server when you modify this file.
+
+# Avoid CORS issues when API is called from the frontend app.
+# Handle Cross-Origin Resource Sharing (CORS) in order to accept cross-origin AJAX requests.
+
+# Read more: https://github.com/cyu/rack-cors
+
+Rails.application.config.middleware.insert_before 0, Rack::Cors do
+  allow do
+    origins '*'
+
+    resource '*',
+      headers: :any,
+      methods: [:get, :post, :put, :patch, :delete, :options, :head]
+  end
+end
+```
+
+### Front end examples:
+
+For this one, we use Graph.js (`npm install graph.js):
+
+Create a BarChart.js:
+```js
+import React, {useEffect} from 'react';
+import Chart from 'chart.js'
+
+const BarChart = () => {
+    useEffect(() => {
+        const getData = () => {
+            fetch('http://localhost:3000/locations/1')
+             .then(data => data.json())
+             .then(jData => prepareData(jData))
+             .then(jData => createChart(jData))
+        }
+
+        const prepareData = data => {
+            const chartData = {
+                labels: [],
+                datasets: [
+                    {
+                        label: 'Avg High Temp',
+                        data: []
+                    }
+                ]
+            }
+            data.temperatures.forEach(temperature => {
+                chartData.labels.push(temperature.id)
+                chartData.datasets[0].data.push(temperature.average_high_f)
+            })
+            console.log('BarChart - chartData:', chartData)
+            return chartData;
+        }
+
+        const createChart = data => {
+            const ctx = document.querySelector('#temperatures')
+            const tempsChart = new Chart(ctx, {
+                type: 'line',
+                data: data
+            })
+        }
+
+        getData()
+
+    }, [])
+
+  return (
+    <>
+      <h1>Temperatures</h1>
+      <canvas id="temperatures" width="300" height="100"></canvas>
+    </>
+  )
+}
+
+export default BarChart;
+```
+
+App.js should look like this:
+```js
+import React , {useState, useEffect} from 'react';
+import BarChart from './components/BarChart.js'
+import './App.css';
+
+function App() {
+  const [location, setLocation] = useState({})
+
+  // componentDidMount
+  useEffect(() => {
+    const makeAPICall = async () => {
+      try {
+        const res = await fetch('http://localhost:3000/locations/1')
+        const json = await res.json()
+        console.log('App - json:', json)
+      } catch (err) {
+           console.log('Error:', err)
+      }
+    }
+    makeAPICall()
+  }, [])
+
+    return (
+      <div className="App">
+        <BarChart />
+      </div>
+    );
+}
+
+export default App;
+```
+
+
 
 
 
