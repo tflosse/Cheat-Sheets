@@ -91,6 +91,9 @@ A better way to go about it, would be to create a table that keeps track of thos
 
 ![](https://i.imgur.com/qKIqoDu.png)
 
+Conceptually:
+![](https://i.imgur.com/Pf8ZHqO.png)
+
 ```rb
 rails g scaffold ledger trader:references commodity:references qty:integer
 ```
@@ -167,4 +170,133 @@ The first ledger creation should have looked like this:
 ![](https://i.imgur.com/aUwg65o.png)
 No we can query for all ledger to check they were created:
 ![](https://i.imgur.com/v5mYPBs.png)
+
+We can now find Ledger, but we wouldn't be able to query across models. For instance `ap Trader.find(1).commodities` because the relations are not yet defined.
+
+#### Models:
+
+`Trader.rb`
+```rb
+class Trader < ApplicationRecord
+    has_many :ledgers
+    has_many :commodities, through: :ledgers
+end
+```
+`Commodity.rb`
+```rb
+class Commodity < ApplicationRecord
+    has_many :ledgers
+    has_many :traders, through: :ledgers
+end
+```
+**Attention** to syntax with the `:`
+
+Note the Ledger model was scaffolded as:
+```rb
+class Ledger < ApplicationRecord
+  belongs_to :trader
+  belongs_to :commodity
+end
+```
+A single ledger *does not have multiple traders or multiple commodities*. A ledger will have ***one trader and one commodity***. Therefore it belongs to a trader and belongs to a commodity.
+
+With the model changes made, the previous command will get:
+![](https://i.imgur.com/lb88ISh.png)
+
+We can also try to find all the traders for one commodity:
+![](https://i.imgur.com/dDV2jlk.png)
+
+**This isn't many-to-many yet** We've estblished *one-to-many* both ways, but not many-to-many.
+
+Create two more ledgers, that will establish that both Trader 1 and Trader 2 also have Commodity 2.
+
+```rb
+ap Ledger.create( trader_id: 1, commodity_id: 2, qty: 1 )
+ap Ledger.create( trader_id: 2, commodity_id: 2, qty: 1 )
+```
+
+Now we can check with:
+![](https://i.imgur.com/r2Wgkej.png)
+Or by querying ledgers for each trader or commodity:
+![](https://i.imgur.com/JWug6vC.png)
+
+****
+So far, we have established many-to-many relations between models with ledgers. Now we can **create a ledger `through` Trader**.
+
+```rb
+ap Trader.find(1).ledgers.create( commodity_id: 8, qty: 8 )
+# check with 
+ap Trader.find(1).commodities
+```
+![](https://i.imgur.com/yyR1p6k.png)
+
+### Controller Routes
+
+In `traders_controller.rb`, we want to change the GET routes to show the associated commodities along with each trader:
+```rb
+  # GET /traders
+  def index
+    @traders = Trader.all
+
+    render json: @traders.to_json(include: :commodities)
+  end
+
+  # GET /traders/1
+  def show
+    render json: @trader.to_json(include: :commodities)
+  end
+```
+
+And vice-versa 
+```rb
+  # GET /commodities
+  def index
+    @commodities = Commodity.all
+
+    render json: @commodities.to_json(include: :traders)
+  end
+
+  # GET /commodities/1
+  def show
+    render json: @commodity.to_json(include: :traders)
+  end
+```
+
+Lastly, make sure the ledger model will do the same -- in `ledgers_controller.rb` the syntax will be slightly different because of the `belongs_to` relations.
+```rb
+  # GET /ledgers
+  def index
+    @ledgers = Ledger.all
+
+    render json: @ledgers.to_json(include: [:trader, :commodity])
+  end
+
+  # GET /ledgers/1
+  def show
+    render json: @ledger.to_json(include: [:trader, :commodity])
+  end
+  ```
+
+  ![](https://i.imgur.com/jWzgW69.png)
+  ![](https://i.imgur.com/nHnrf4F.png)
+  ![](https://i.imgur.com/LAXHRiu.png)
+
+  ****
+  #### Validating & avoiding duplicates:
+
+If you happened to run the same command twice, and ended up with duplicate ledgers, we can validate in the `Ledger.rb` model: 
+
+
+```rb
+class Ledger < ApplicationRecord
+  belongs_to :trader
+  belongs_to :commodity
+
+  validates_uniqueness_of :commodity_id, scope: :trader_id
+  validates_uniqueness_of :trader_id, scope: :commodity_id
+end
+```
+
+Adding duplicates will lead to an error, meanwhile delete the Ledgers we don't want with `Ledger.destroy(3)`.
+
 
