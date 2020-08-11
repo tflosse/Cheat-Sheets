@@ -6,13 +6,13 @@
 
 Rails allows for storing that information by using `sessions` in the same way we would in an MVC, but in an API. **Note:** to use the session, it might be best to set up the server as an app rather than api, rather than start an api and then reinstall dependencies.
 
-![https://www.youtube.com/watch?v=z18zLCAg7UU&list=PLgYiyoyNPrv_yNp5Pzsx0A3gQ8-tfg66j]
+[Video series](https://www.youtube.com/watch?v=z18zLCAg7UU&list=PLgYiyoyNPrv_yNp5Pzsx0A3gQ8-tfg66j)
 
 ### Configuration: 
 
 `rails db:create`
 
-Then get the proper version of gems from ![https://rubygems.org/]: 
+Then get the proper version of gems from [here](https://rubygems.org/): 
 - `bcrypt` (currently: `gem 'bcrypt', '~> 3.1', '>= 3.1.15'`)
 - `rack-cors` (currently `gem 'rack-cors', '~> 1.1', '>= 1.1.1'`)
 ```rb
