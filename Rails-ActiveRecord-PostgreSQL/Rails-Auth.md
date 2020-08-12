@@ -36,7 +36,7 @@ We are inserting middlware with cors, and defining what we be allowed:
 ```rb
 Rails.application.config.middleware.insert_before 0, Rack::Cors do
   allow do
-    origins "http://localhost:3000"
+    origins "http://localhost:3001"
     resource "*", headers: :any, methods: [:get, :post, :put, :patch, :delete, :options, :head], credentials: true
   end
   allow do
@@ -228,6 +228,7 @@ module CurrentUserConcern
     def set_current_user
         if session[:user_id]
             @current_user = User.find(session[:user_id])
+        end
     end
 end
 ```
